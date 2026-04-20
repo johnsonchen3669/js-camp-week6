@@ -5,11 +5,11 @@
 // ========================================
 
 // 載入環境變數
-require("dotenv").config({ path: ".env" });
+require('dotenv').config({ path: '.env' });
 
 // API 設定（從 .env 讀取）
 const API_PATH = process.env.API_PATH;
-const BASE_URL = "https://livejs-api.hexschool.io";
+const BASE_URL = 'https://livejs-api.hexschool.io';
 const ADMIN_TOKEN = process.env.API_KEY;
 
 // ========================================
@@ -22,11 +22,16 @@ const ADMIN_TOKEN = process.env.API_KEY;
  * @returns {Promise<Array>} - 回傳 products 陣列
  */
 async function getProducts() {
-	// 請實作此函式
-	// 提示：
-	// 1. 使用 fetch() 發送 GET 請求
-	// 2. 使用 response.json() 解析回應
-	// 3. 回傳 data.products
+  // 請實作此函式
+  // 提示：
+  // 1. 使用 fetch() 發送 GET 請求
+  // 2. 使用 response.json() 解析回應
+  // 3. 回傳 data.products
+  const response = await fetch(
+    `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`,
+  );
+  const resData = await response.json();
+  return resData.products;
 }
 
 /**
@@ -34,7 +39,13 @@ async function getProducts() {
  * @returns {Promise<Object>} - 回傳 { carts: [...], total: 數字, finalTotal: 數字 }
  */
 async function getCart() {
-	// 請實作此函式
+  // 請實作此函式
+  const response = await fetch(
+    `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`,
+  );
+  const resData = await response.json();
+  const { carts, total, finalTotal } = resData;
+  return { carts: [...resData.carts], total, finalTotal };
 }
 
 /**
@@ -42,12 +53,25 @@ async function getCart() {
  * @returns {Promise<Object>} - 回傳 { success: boolean, data?: [...], error?: string }
  */
 async function getProductsSafe() {
-	// 請實作此函式
-	// 提示：
-	// 1. 加上 try-catch 處理錯誤
-	// 2. 檢查 response.ok 判斷是否成功
-	// 3. 成功回傳 { success: true, data: [...] }
-	// 4. 失敗回傳 { success: false, error: '錯誤訊息' }
+  // 請實作此函式
+  // 提示：
+  // 1. 加上 try-catch 處理錯誤
+  // 2. 檢查 response.ok 判斷是否成功
+  // 3. 成功回傳 { success: true, data: [...] }
+  // 4. 失敗回傳 { success: false, error: '錯誤訊息' }
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`,
+    );
+    if (!response.ok) {
+      throw new Error('發生錯誤');
+    }
+    const resData = await response.json();
+    return { success: true, data: [...resData.products] };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
 }
 
 // ========================================
